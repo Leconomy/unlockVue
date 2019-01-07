@@ -4620,6 +4620,7 @@ function initMixin (Vue) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options);
     } else {
+		console.log(vm.$options);
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},

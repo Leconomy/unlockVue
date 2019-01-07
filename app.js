@@ -23,5 +23,5 @@ app.use(favicon(config.favi));
 initRouters(app);
 
 app.listen(config.port, () => {
-	console.log('app start');
+	console.log('http://localhost:' + config.port);
 });

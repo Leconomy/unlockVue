@@ -2649,9 +2649,7 @@ function lifecycleMixin (Vue) {
     var prevEl = vm.$el;
     var prevVnode = vm._vnode;
     var prevActiveInstance = activeInstance;
-	activeInstance = vm;
-	
-	testFunction2ConsleObject(vm, 'L2654', '开始打包为真实DOM');
+    activeInstance = vm;
     vm._vnode = vnode;
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
@@ -2661,8 +2659,7 @@ function lifecycleMixin (Vue) {
     } else {
       // updates
       vm.$el = vm.__patch__(prevVnode, vnode);
-	}
-	testFunction2ConsleObject(vm, 'L2665', '输出真实DOM');
+    }
     activeInstance = prevActiveInstance;
     // update __vue__ reference
     if (prevEl) {
@@ -2670,8 +2667,7 @@ function lifecycleMixin (Vue) {
     }
     if (vm.$el) {
       vm.$el.__vue__ = vm;
-	}
-	testFunction2ConsleObject(vm, 'L2674');
+    }
     // if parent is an HOC, update its $el as well
     if (vm.$vnode && vm.$parent && vm.$vnode === vm.$parent._vnode) {
       vm.$parent.$el = vm.$el;
@@ -2736,7 +2732,6 @@ function mountComponent (
   el,
   hydrating
 ) {
-	testFunction2ConsleObject(vm, 'L2735');
   vm.$el = el;
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode;
@@ -2796,7 +2791,7 @@ function mountComponent (
     }
   }, true /* isRenderWatcher */);
   hydrating = false;
-  testFunction2ConsleObject(vm, '2795');
+
   // manually mounted instance, call mounted on self
   // mounted is called for render-created child components in its inserted hook
   if (vm.$vnode == null) {
@@ -3136,7 +3131,6 @@ var Watcher = function Watcher (
   } else {
     this.value = this.get();
   }
-  testFunction2ConsleObject(this, 'L3139', 'watcher的值');
 };
 
 /**
@@ -4608,7 +4602,7 @@ function initMixin (Vue) {
     var vm = this;
     // a uid
     vm._uid = uid$3++;
-	testFunction2ConsleObject(vm, 'L4606');
+
     var startTag, endTag;
     /* istanbul ignore if */
     if ("development" !== 'production' && config.performance && mark) {
