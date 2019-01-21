@@ -2648,13 +2648,17 @@ function lifecycleMixin (Vue) {
     var vm = this;
     var prevEl = vm.$el;
     var prevVnode = vm._vnode;
-    var prevActiveInstance = activeInstance;
+	var prevActiveInstance = activeInstance;
+	console.log('L2652, activeInstance', activeInstance);
+	console.log('L2652, prevActiveInstance', prevActiveInstance);
+	console.log('L2652, vm', vm);
     activeInstance = vm;
     vm._vnode = vnode;
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
     if (!prevVnode) {
-      // initial render
+	  // initial render
+	  console.log('L2661 第一次初始render __patch__', vm.$el, vnode);
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
     } else {
       // updates
@@ -4138,18 +4142,18 @@ var componentVNodeHooks = {
       // kept-alive components, treat as a patch
       var mountedNode = vnode; // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode);
-    } else {
+    } else {console.log('L4145 component hooks init', vnode);
       var child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance
-      );
+      );console.log('L4149 component hooks init $mount', vnode);
       child.$mount(hydrating ? vnode.elm : undefined, hydrating);
     }
   },
 
   prepatch: function prepatch (oldVnode, vnode) {
     var options = vnode.componentOptions;
-    var child = vnode.componentInstance = oldVnode.componentInstance;
+    var child = vnode.componentInstance = oldVnode.componentInstance;console.log('L4146 component hooks prepatch', oldVnode, vnode);
     updateChildComponent(
       child,
       options.propsData, // updated props
@@ -4159,7 +4163,7 @@ var componentVNodeHooks = {
     );
   },
 
-  insert: function insert (vnode) {
+  insert: function insert (vnode) {console.log('L4166 component hooks insert', vnode);
     var context = vnode.context;
     var componentInstance = vnode.componentInstance;
     if (!componentInstance._isMounted) {
@@ -4277,10 +4281,10 @@ function createComponent (
       data.slot = slot;
     }
   }
-
+  console.log('L4284, createComponent', Ctor, data, Object.assign({},context), children, tag);
   // install component management hooks onto the placeholder node
   installComponentHooks(data);
-
+  console.log('L4287, installComponentHooks', data, tag);
   // return a placeholder vnode
   var name = Ctor.options.name || tag;
   var vnode = new VNode(
@@ -4289,7 +4293,7 @@ function createComponent (
     { Ctor: Ctor, propsData: propsData, listeners: listeners, tag: tag, children: children },
     asyncFactory
   );
-
+  console.log('L4296, new VNode', Object.assign({}, vnode));
   // Weex specific: invoke recycle-list optimized @render function for
   // extracting cell-slot template.
   // https://github.com/Hanks10100/weex-native-directive/tree/master/component
@@ -4364,7 +4368,7 @@ function createElement (
   children,
   normalizationType,
   alwaysNormalize
-) {
+) {console.log('L4371 createElement:', Object.assign({}, context), tag, data, children, normalizationType, alwaysNormalize);
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children;
     children = data;
@@ -4382,7 +4386,7 @@ function _createElement (
   data,
   children,
   normalizationType
-) {
+) {console.log('L4389 _createElement:', Object.assign({}, context), tag, data, children, normalizationType);
   if (isDef(data) && isDef((data).__ob__)) {
     "development" !== 'production' && warn(
       "Avoid using observed data object as vnode data: " + (JSON.stringify(data)) + "\n" +
@@ -4429,12 +4433,15 @@ function _createElement (
     var Ctor;
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag);
     if (config.isReservedTag(tag)) {
-      // platform built-in elements
+	  // platform built-in elements
+	  console.log('L4437 div vnode');
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       );
     } else if (isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+		console.log('L4443 解析$options.components并创建组件', Object.assign({}, context.$options, tag));
+		console.log('L4444', tag, '的构造器是', Object.assign({}, Ctor));
       // component
       vnode = createComponent(Ctor, data, context, children, tag);
     } else {
@@ -4575,7 +4582,8 @@ function renderMixin (Vue) {
           vnode = vm._vnode;
         }
       }
-    }
+	}
+	console.log('L4586 vnode', Object.assign({}, vnode));
     // return empty vnode in case the render function errored out
     if (!(vnode instanceof VNode)) {
       if ("development" !== 'production' && Array.isArray(vnode)) {
@@ -5552,6 +5560,7 @@ function createPatchFunction (backend) {
     ownerArray,
     index
   ) {
+	console.log('L5563创建元素', Object.assign({}, vnode), Object.assign([], insertedVnodeQueue), parentElm, refElm, nested, ownerArray, index);
     if (isDef(vnode.elm) && isDef(ownerArray)) {
       // This vnode was used in a previous render!
       // now it's used as a new node, overwriting its elm would cause
@@ -5602,19 +5611,26 @@ function createPatchFunction (backend) {
         creatingElmInVPre--;
       }
     } else if (isTrue(vnode.isComment)) {
+	  console.log('L5614 创建注释node', vnode.elm, parentElm);
       vnode.elm = nodeOps.createComment(vnode.text);
-      insert(parentElm, vnode.elm, refElm);
+	  insert(parentElm, vnode.elm, refElm);
+	  console.log('L5617 插入注释node', vnode.elm, parentElm);
     } else {
+		console.log('L5619 创建文本node', vnode.elm, parentElm);
       vnode.elm = nodeOps.createTextNode(vnode.text);
-      insert(parentElm, vnode.elm, refElm);
+	  insert(parentElm, vnode.elm, refElm);
+	  console.log('L5622 文本注释node', vnode.elm, parentElm);
     }
   }
 
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
-    var i = vnode.data;
+	console.log('L5627 patch中createComponent');
+	var i = vnode.data;
+	console.log('L5629, vnode.data的值', i);
     if (isDef(i)) {
       var isReactivated = isDef(vnode.componentInstance) && i.keepAlive;
       if (isDef(i = i.hook) && isDef(i = i.init)) {
+		console.log('L5633 hook的init方法');
         i(vnode, false /* hydrating */);
       }
       // after calling the init hook, if the vnode is a child component
@@ -5622,6 +5638,7 @@ function createPatchFunction (backend) {
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
       if (isDef(vnode.componentInstance)) {
+		console.log('L5641 vnode.componentInstance', Object.assign({}, vnode.componentInstance));
         initComponent(vnode, insertedVnodeQueue);
         insert(parentElm, vnode.elm, refElm);
         if (isTrue(isReactivated)) {
@@ -5689,7 +5706,7 @@ function createPatchFunction (backend) {
       {
         checkDuplicateKeys(children);
       }
-      for (var i = 0; i < children.length; ++i) {
+      for (var i = 0; i < children.length; ++i) {console.log('L5709 递归创建子元素', children[i], vnode, insertedVnodeQueue);
         createElm(children[i], insertedVnodeQueue, vnode.elm, null, true, children, i);
       }
     } else if (isPrimitive(vnode.text)) {
@@ -6088,6 +6105,7 @@ function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
+	console.log('L6108 第一次初始render __patch__方法体', Object.assign({}, oldVnode), vnode);
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
       return
@@ -6097,11 +6115,13 @@ function createPatchFunction (backend) {
     var insertedVnodeQueue = [];
 
     if (isUndef(oldVnode)) {
+	  console.log('L6116 oldVnode is undefined 说明是组件');
       // empty mount (likely as component), create new root element
       isInitialPatch = true;
       createElm(vnode, insertedVnodeQueue);
     } else {
-      var isRealElement = isDef(oldVnode.nodeType);
+	  var isRealElement = isDef(oldVnode.nodeType);
+	  console.log('L6124是一个真实的element');
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
         patchVnode(oldVnode, vnode, insertedVnodeQueue, removeOnly);
@@ -6129,14 +6149,15 @@ function createPatchFunction (backend) {
             }
           }
           // either not server-rendered, or hydration failed.
-          // create an empty node and replace it
+		  // create an empty node and replace it
           oldVnode = emptyNodeAt(oldVnode);
+		  console.log('L6154真实的element转换为虚拟vnode', Object.assign({}, oldVnode));
         }
 
         // replacing existing element
         var oldElm = oldVnode.elm;
         var parentElm = nodeOps.parentNode(oldElm);
-
+		console.log('L6160 oldVnode.elm的父元素', parentElm);
         // create new node
         createElm(
           vnode,
@@ -10945,8 +10966,9 @@ Vue.prototype.$mount = function (
       var render = ref.render;
       var staticRenderFns = ref.staticRenderFns;
       options.render = render;
-      options.staticRenderFns = staticRenderFns;
-
+	  options.staticRenderFns = staticRenderFns;
+	  console.log('-------------------------------------------------------------------------------------');
+	  console.log('L10970 编译为render函数:', el, render.toString());
       /* istanbul ignore if */
       if ("development" !== 'production' && config.performance && mark) {
         mark('compile end');
