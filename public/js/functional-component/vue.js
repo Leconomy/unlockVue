@@ -2648,17 +2648,13 @@ function lifecycleMixin (Vue) {
     var vm = this;
     var prevEl = vm.$el;
     var prevVnode = vm._vnode;
-	var prevActiveInstance = activeInstance;
-	console.log('L2652, activeInstance', activeInstance);
-	console.log('L2652, prevActiveInstance', prevActiveInstance);
-	console.log('L2652, vm', vm);
+    var prevActiveInstance = activeInstance;
     activeInstance = vm;
     vm._vnode = vnode;
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
     if (!prevVnode) {
-	  // initial render
-	  console.log('L2661 第一次初始render __patch__', vm.$el, vnode);
+      // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
     } else {
       // updates
@@ -4016,7 +4012,7 @@ function FunctionalRenderContext (
   }
   var isCompiled = isTrue(options._compiled);
   var needNormalization = !isCompiled;
-
+  console.log('L4015', '实例化functional组件的context');
   this.data = data;
   this.props = props;
   this.children = children;
@@ -4045,7 +4041,7 @@ function FunctionalRenderContext (
     };
   } else {
     this._c = function (a, b, c, d) { return createElement(contextVm, a, b, c, d, needNormalization); };
-  }
+  }console.log('L4044', 'functional组件的_createElement', this._c.toString());
 }
 
 installRenderHelpers(FunctionalRenderContext.prototype);
@@ -4068,7 +4064,7 @@ function createFunctionalComponent (
     if (isDef(data.attrs)) { mergeProps(props, data.attrs); }
     if (isDef(data.props)) { mergeProps(props, data.props); }
   }
-
+	console.log('L4067', '创建functional组件', Ctor, data, contextVm, children);
   var renderContext = new FunctionalRenderContext(
     data,
     props,
@@ -4076,7 +4072,7 @@ function createFunctionalComponent (
     contextVm,
     Ctor
   );
-
+  console.log('L4075', '创建functional组件vnode', 'vnode = options.render.call(null, renderContext._c, renderContext)');
   var vnode = options.render.call(null, renderContext._c, renderContext);
 
   if (vnode instanceof VNode) {
@@ -4142,18 +4138,18 @@ var componentVNodeHooks = {
       // kept-alive components, treat as a patch
       var mountedNode = vnode; // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode);
-    } else {console.log('L4145 component hooks init', vnode);
+    } else {
       var child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance
-      );console.log('L4149 component hooks init $mount', vnode);
+      );
       child.$mount(hydrating ? vnode.elm : undefined, hydrating);
     }
   },
 
   prepatch: function prepatch (oldVnode, vnode) {
     var options = vnode.componentOptions;
-    var child = vnode.componentInstance = oldVnode.componentInstance;console.log('L4146 component hooks prepatch', oldVnode, vnode);
+    var child = vnode.componentInstance = oldVnode.componentInstance;
     updateChildComponent(
       child,
       options.propsData, // updated props
@@ -4163,7 +4159,7 @@ var componentVNodeHooks = {
     );
   },
 
-  insert: function insert (vnode) {console.log('L4166 component hooks insert', vnode);
+  insert: function insert (vnode) {
     var context = vnode.context;
     var componentInstance = vnode.componentInstance;
     if (!componentInstance._isMounted) {
@@ -4257,12 +4253,12 @@ function createComponent (
 
   // extract props
   var propsData = extractPropsFromVNodeData(data, Ctor, tag);
-
+  console.log('%cL4256 判断组件是不是functional', 'color: red; font-size: x-large', Ctor.options.functional);
   // functional component
   if (isTrue(Ctor.options.functional)) {
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
-
+  console.log('L4261', '组件不是functional');
   // extract listeners, since these needs to be treated as
   // child component listeners instead of DOM listeners
   var listeners = data.on;
@@ -4281,10 +4277,10 @@ function createComponent (
       data.slot = slot;
     }
   }
-  console.log('L4284, createComponent', Ctor, data, Object.assign({},context), children, tag);
+
   // install component management hooks onto the placeholder node
   installComponentHooks(data);
-  console.log('L4287, installComponentHooks', data, tag);
+  console.log('L4283', '组件data.hook', data);
   // return a placeholder vnode
   var name = Ctor.options.name || tag;
   var vnode = new VNode(
@@ -4293,7 +4289,7 @@ function createComponent (
     { Ctor: Ctor, propsData: propsData, listeners: listeners, tag: tag, children: children },
     asyncFactory
   );
-  console.log('L4296, new VNode', Object.assign({}, vnode));
+
   // Weex specific: invoke recycle-list optimized @render function for
   // extracting cell-slot template.
   // https://github.com/Hanks10100/weex-native-directive/tree/master/component
@@ -4368,7 +4364,7 @@ function createElement (
   children,
   normalizationType,
   alwaysNormalize
-) {console.log('L4371 createElement:', Object.assign({}, context), tag, data, children, normalizationType, alwaysNormalize);
+) {
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children;
     children = data;
@@ -4386,7 +4382,7 @@ function _createElement (
   data,
   children,
   normalizationType
-) {console.log('L4389 _createElement:', Object.assign({}, context), tag, data, children, normalizationType);
+) {
   if (isDef(data) && isDef((data).__ob__)) {
     "development" !== 'production' && warn(
       "Avoid using observed data object as vnode data: " + (JSON.stringify(data)) + "\n" +
@@ -4433,15 +4429,12 @@ function _createElement (
     var Ctor;
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag);
     if (config.isReservedTag(tag)) {
-	  // platform built-in elements
-	  console.log('L4437 div vnode');
+      // platform built-in elements
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       );
     } else if (isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
-		console.log('L4443 解析$options.components并创建组件', Object.assign({}, context.$options, tag));
-		console.log('L4444', tag, '的构造器是', Object.assign({}, Ctor));
       // component
       vnode = createComponent(Ctor, data, context, children, tag);
     } else {
@@ -4582,8 +4575,7 @@ function renderMixin (Vue) {
           vnode = vm._vnode;
         }
       }
-	}
-	console.log('L4586 vnode', Object.assign({}, vnode));
+    }
     // return empty vnode in case the render function errored out
     if (!(vnode instanceof VNode)) {
       if ("development" !== 'production' && Array.isArray(vnode)) {
@@ -5560,7 +5552,6 @@ function createPatchFunction (backend) {
     ownerArray,
     index
   ) {
-	console.log('L5563创建元素', Object.assign({}, vnode), Object.assign([], insertedVnodeQueue), parentElm, refElm, nested, ownerArray, index);
     if (isDef(vnode.elm) && isDef(ownerArray)) {
       // This vnode was used in a previous render!
       // now it's used as a new node, overwriting its elm would cause
@@ -5569,7 +5560,7 @@ function createPatchFunction (backend) {
       // associated DOM element for it.
       vnode = ownerArray[index] = cloneVNode(vnode);
     }
-
+	console.log('%cL5563 patch打包createElm', 'color: green; font-size: x-large', vnode, parentElm)
     vnode.isRootInsert = !nested; // for transition enter check
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
@@ -5592,12 +5583,12 @@ function createPatchFunction (backend) {
           );
         }
       }
-
+	  
       vnode.elm = vnode.ns
         ? nodeOps.createElementNS(vnode.ns, tag)
         : nodeOps.createElement(tag, vnode);
       setScope(vnode);
-
+	  console.log('%cL5591', 'color: blue; font-size:x-large', '创建真实dom', vnode.elm);
       /* istanbul ignore if */
       {
         createChildren(vnode, children, insertedVnodeQueue);
@@ -5611,26 +5602,19 @@ function createPatchFunction (backend) {
         creatingElmInVPre--;
       }
     } else if (isTrue(vnode.isComment)) {
-	  console.log('L5614 创建注释node', vnode.elm, parentElm);
       vnode.elm = nodeOps.createComment(vnode.text);
-	  insert(parentElm, vnode.elm, refElm);
-	  console.log('L5617 插入注释node', vnode.elm, parentElm);
+      insert(parentElm, vnode.elm, refElm);
     } else {
-		console.log('L5619 创建文本node', vnode.elm, parentElm);
       vnode.elm = nodeOps.createTextNode(vnode.text);
-	  insert(parentElm, vnode.elm, refElm);
-	  console.log('L5622 文本注释node', vnode.elm, parentElm);
+      insert(parentElm, vnode.elm, refElm);
     }
   }
 
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
-	console.log('L5627 patch中createComponent');
-	var i = vnode.data;
-	console.log('L5629, vnode.data的值', i);
+    var i = vnode.data;console.log('L5614 创建元素 创建组件', i);
     if (isDef(i)) {
       var isReactivated = isDef(vnode.componentInstance) && i.keepAlive;
       if (isDef(i = i.hook) && isDef(i = i.init)) {
-		console.log('L5633 hook的init方法');
         i(vnode, false /* hydrating */);
       }
       // after calling the init hook, if the vnode is a child component
@@ -5638,7 +5622,6 @@ function createPatchFunction (backend) {
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
       if (isDef(vnode.componentInstance)) {
-		console.log('L5641 组件占位vnode插入到parentElm中', parentElm, vnode);
         initComponent(vnode, insertedVnodeQueue);
         insert(parentElm, vnode.elm, refElm);
         if (isTrue(isReactivated)) {
@@ -5689,7 +5672,7 @@ function createPatchFunction (backend) {
     insert(parentElm, vnode.elm, refElm);
   }
 
-  function insert (parent, elm, ref$$1) {console.log('%cL5692 插入dom', 'color: blue; font-size:x-large', parent, elm, ref$$1);
+  function insert (parent, elm, ref$$1) {
     if (isDef(parent)) {
       if (isDef(ref$$1)) {
         if (ref$$1.parentNode === parent) {
@@ -5706,7 +5689,7 @@ function createPatchFunction (backend) {
       {
         checkDuplicateKeys(children);
       }
-      for (var i = 0; i < children.length; ++i) {console.log('L5709 递归创建子元素', children[i], vnode, insertedVnodeQueue);
+      for (var i = 0; i < children.length; ++i) {
         createElm(children[i], insertedVnodeQueue, vnode.elm, null, true, children, i);
       }
     } else if (isPrimitive(vnode.text)) {
@@ -6105,7 +6088,6 @@ function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
-	console.log('%cL6108 第一次初始render __patch__方法体', 'color: red; font-size: x-large', oldVnode, vnode);
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
       return
@@ -6115,13 +6097,11 @@ function createPatchFunction (backend) {
     var insertedVnodeQueue = [];
 
     if (isUndef(oldVnode)) {
-	  console.log('L6116 oldVnode is undefined 说明是组件');
       // empty mount (likely as component), create new root element
       isInitialPatch = true;
       createElm(vnode, insertedVnodeQueue);
     } else {
-	  var isRealElement = isDef(oldVnode.nodeType);
-	  console.log('L6124是一个真实的element');
+      var isRealElement = isDef(oldVnode.nodeType);
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
         patchVnode(oldVnode, vnode, insertedVnodeQueue, removeOnly);
@@ -6149,15 +6129,14 @@ function createPatchFunction (backend) {
             }
           }
           // either not server-rendered, or hydration failed.
-		  // create an empty node and replace it
+          // create an empty node and replace it
           oldVnode = emptyNodeAt(oldVnode);
-		  console.log('L6154真实的element转换为虚拟vnode', Object.assign({}, oldVnode));
         }
 
         // replacing existing element
         var oldElm = oldVnode.elm;
         var parentElm = nodeOps.parentNode(oldElm);
-		console.log('L6160 oldVnode.elm的父元素', parentElm);
+
         // create new node
         createElm(
           vnode,
@@ -10966,9 +10945,8 @@ Vue.prototype.$mount = function (
       var render = ref.render;
       var staticRenderFns = ref.staticRenderFns;
       options.render = render;
-	  options.staticRenderFns = staticRenderFns;
-	  
-	  console.log('%cL10970 编译为render函数:', 'color: green; font-size: x-large', el, render.toString());
+      options.staticRenderFns = staticRenderFns;
+
       /* istanbul ignore if */
       if ("development" !== 'production' && config.performance && mark) {
         mark('compile end');
