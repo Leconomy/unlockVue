@@ -7,8 +7,10 @@ var app = new Vue({
 	},
 	template: `
 		<section>
+			<input v-model="message">
 			<h2>{{message}}</h2>
 			<a @click.prevent="handleClick" href="">事件</a>
+			<textarea>360</textarea>
 			<ul>
 				<li v-for="(item, index) in list" :key="index">{{item}}</li>
 			</ul>

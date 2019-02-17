@@ -4,6 +4,7 @@ const multiComponentsVue = require('./multi-components-vue');
 const functionalComponent = require('./functional-component');
 const observe = require('./observe');
 const parse = require('./parse');
+const vmodel = require('./v-model');
 
 module.exports = function(app) {
 	[
@@ -12,7 +13,8 @@ module.exports = function(app) {
 		multiComponentsVue, 
 		functionalComponent, 
 		observe,
-		parse
+		parse,
+		vmodel
 	].forEach((item) => {
 		app.use(item.routes());
 	});

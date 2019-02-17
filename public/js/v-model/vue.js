@@ -6885,7 +6885,7 @@ function model (
   var modifiers = dir.modifiers;
   var tag = el.tag;
   var type = el.attrsMap.type;
-
+debugger
   {
     // inputs with type="file" are read only and setting the input's
     // value will throw an error.
@@ -6992,7 +6992,7 @@ function genDefaultModel (
   modifiers
 ) {
   var type = el.attrsMap.type;
-
+console.log('L6995 genDefaultModel', Object.assign({}, el), value);
   // warn if v-bind:value conflicts with v-model
   // except for inputs with v-bind:type
   {
@@ -7030,7 +7030,7 @@ function genDefaultModel (
   if (needCompositionGuard) {
     code = "if($event.target.composing)return;" + code;
   }
-
+console.log('L7033 addProp', code);
   addProp(el, 'value', ("(" + value + ")"));
   addHandler(el, event, code, null, true);
   if (trim || number) {
@@ -8906,7 +8906,7 @@ function parseHTML (html, options) {
       var endTagLength = 0;
       var stackedTag = lastTag.toLowerCase();
       var reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp('([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'));
-      var rest$1 = html.replace(reStackedTag, function (all, text, endTag) {console.log('L8909', text, endTag, stackedTag, reStackedTag);
+      var rest$1 = html.replace(reStackedTag, function (all, text, endTag) {
         endTagLength = endTag.length;
         if (!isPlainTextElement(stackedTag) && stackedTag !== 'noscript') {
           text = text
@@ -9115,7 +9115,7 @@ function parse (
   options
 ) {
   warn$2 = options.warn || baseWarn;
-debugger
+
   platformIsPreTag = options.isPreTag || no;
   platformMustUseProp = options.mustUseProp || no;
   platformGetTagNamespace = options.getTagNamespace || no;
@@ -9553,7 +9553,7 @@ function processComponent (el) {
   }
 }
 
-function processAttrs (el) {
+function processAttrs (el) {debugger;console.log('L9556处理属性el', Object.assign({}, el));
   var list = el.attrsList;
   var i, l, name, rawName, value, modifiers, isProp;
   for (i = 0, l = list.length; i < l; i++) {
@@ -9633,7 +9633,7 @@ function processAttrs (el) {
         addProp(el, name, 'true');
       }
     }
-  }
+  }console.log('L9556处理属性完成el', Object.assign({}, el));
 }
 
 function checkInFor (el) {
@@ -10158,7 +10158,7 @@ var CodegenState = function CodegenState (options) {
 function generate (
   ast,
   options
-) {console.log('L10161 进行code');
+) {debugger;
   var state = new CodegenState(options);
   var code = ast ? genElement(ast, state) : '_c("div")';
   return {
@@ -10194,7 +10194,7 @@ function genElement (el, state) {
     // module transforms
     for (var i = 0; i < state.transforms.length; i++) {
       code = state.transforms[i](el, code);
-    }console.log('L10197 code结果:', code);
+    }
     return code
   }
 }
@@ -10704,7 +10704,7 @@ function createFunction (code, errors) {
 
 function createCompileToFunctionFn (compile) {
   var cache = Object.create(null);
-debugger;
+
   return function compileToFunctions (
     template,
     options,
@@ -10739,7 +10739,7 @@ debugger;
     if (cache[key]) {
       return cache[key]
     }
-console.log('L10742 开始编译', compile.toString(), Object.assign({}, options));
+
     // compile
     var compiled = compile(template, options);
 
@@ -10849,10 +10849,10 @@ var createCompiler = createCompilerCreator(function baseCompile (
   template,
   options
 ) {
-  var ast = parse(template.trim(), options);console.log('L10852 抽象树:', Object.assign({}, ast));
+  var ast = parse(template.trim(), options);
   if (options.optimize !== false) {
     optimize(ast, options);
-  }console.log('L10855 优化后的抽象树:', Object.assign({}, ast));
+  }
   var code = generate(ast, options);
   return {
     ast: ast,
@@ -10946,7 +10946,7 @@ Vue.prototype.$mount = function (
       var staticRenderFns = ref.staticRenderFns;
       options.render = render;
       options.staticRenderFns = staticRenderFns;
-
+console.log('L10949 render', options.render);
       /* istanbul ignore if */
       if ("development" !== 'production' && config.performance && mark) {
         mark('compile end');
