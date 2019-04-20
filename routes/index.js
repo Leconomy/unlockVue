@@ -5,6 +5,7 @@ const functionalComponent = require('./functional-component');
 const observe = require('./observe');
 const parse = require('./parse');
 const vmodel = require('./v-model');
+const slot = require('./slot');
 
 module.exports = function(app) {
 	[
@@ -14,7 +15,8 @@ module.exports = function(app) {
 		functionalComponent, 
 		observe,
 		parse,
-		vmodel
+		vmodel,
+		slot
 	].forEach((item) => {
 		app.use(item.routes());
 	});

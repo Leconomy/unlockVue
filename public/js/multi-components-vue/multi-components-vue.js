@@ -4,8 +4,14 @@ Vue.component('name', {
 			message: '测试'
 		};
 	},
-	template: '<div class="inner">{{message}}</div>'
+	methods: {
+		handleClick() {
+			console.log(2);
+		}
+	},
+	template: '<div class="inner" @click="handleClick">{{message}}</div>'
 })
 var app = new Vue({
-	el: '#app'
+	el: '#app',
+	template: '<name></name>'
 });

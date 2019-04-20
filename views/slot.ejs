@@ -9,8 +9,16 @@
 	<link rel="stylesheet" type="text/css" href="../css/<%= page %>.css">
 </head>
 <body>
-	<section id="app">
-	</section>
+	<div id="app">
+	</div>
+	<script>
+		function testFunction2ConsleObject(vm, line, msg) {
+			var line = line || '';
+			var msg = msg || '';
+			var temp = Object.assign({}, vm);
+			msg ? console.log(temp, line, msg) : console.log(temp, line);
+		}
+	</script>
 	<script src="../js/<%= page %>/vue.js"></script>
 	<script src="../js/<%= page %>/<%= page %>.js"></script>
 </body>
